@@ -12,7 +12,7 @@ To use in google sheets:
 3. Paste ccprice code and save
 4. In your sheet, type in =ccprice(cryptocurrency, currency)  
    example:   
-   =ccprice("ethereum", "USD")  
+   =ccprice("ethereum", "USD") 
 
    
 The currency parameter accepts the following currencies:  
@@ -25,25 +25,4 @@ so you would type in =ccprice("ethereum-classic", "btc")
 
 https://coinmarketcap.com/currencies/heat-ledger/  
 so you would type in =ccprice("heat-ledger", "btc")
-
-also very easy to get any of the following by making  minor edits to the code:
-
-id  
-name  
-symbol  
-rank  
-24h_volume_usd  
-market_cap_usd  
-available_supply  
-total_supply  
-percent_change_1h  
-percent_change_24h  
-percent_change_7d  
-last_updated  
-24h_volume_eur (or w/e your currency is)  
-market_cap_eur (or w/e your currency is)
-
-Show some love (BTC):  
-1N1iZfDJLYjCDNQMNaJosWyeJBAqJF91ub
-
  

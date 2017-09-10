@@ -46,6 +46,7 @@ switch(output){
   case "percent_change_1h": return percent_change_1h;
   case "percent_change_24h": return percent_change_24h;
   case "percent_change_7d": return percent_change_7d;    
+  default: return price;
      }
 }
 
