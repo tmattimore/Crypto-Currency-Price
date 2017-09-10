@@ -1,17 +1,28 @@
-//returns price of cryptocurrency from coinmarketcap api.
-//takes two parameters, the name of the cryptocurrency and the currency to return price in
+//returns info for cryptocurrency from coinmarketcap api.
+//takes 3 parameters plus a refresher:
+// 1. Currency name to get info on (bitcoin, ethereum, etc)
+// 2. Currency to return value in (for price)
+// 3. Type of information to return (price, percent_change)
+// 4. Refresher so Google Sheets caching doesn't prevent updating numbers.
 
-//example: =ccprice("ethereum", "USD")
+//example: =ccprice("ethereum", "USD", "price", A1) where refreshLastUpdate function points at A1.
 
-function ccprice(name, currency) 
+// refreshLastUpdate sets A1 to the current timestring. Google Sheets funcitons will cache results if 
+// the inputs are the same. This prevents things like financial information to be up to date throughout 
+// the day. Additionally, inputs to functions cannot be set to other cells that =TODAY(). However, you
+// can set a cell value to the current time with another function.
+
+function ccprice(input_name, currency_output, output, speedyrefreshinput) 
 {
-var url = "https://api.coinmarketcap.com/v1/ticker/" + name + "?convert=" + currency
+var url = "https://api.coinmarketcap.com/v1/ticker/" + input_name + "?convert=" + currency_output
 var response = UrlFetchApp.fetch(url);
 var json = response.getContentText();
 var data = JSON.parse(json);
 
 //had to add [0] to data because w/o it price was an array with one element in it
 //instead of the element itself  
+  
+ // Added time which you should set to a cell that equals "now()" which will make this function refresh more
   
 var priceval = {  "EUR" : data[0].price_eur, "USD" : data[0].price_usd, "BTC" : data[0].price_btc,
                   "AUD" : data[0].price_aud, "BRL" : data[0].price_brl, "CAD" : data[0].price_cad, 
@@ -25,7 +36,28 @@ var priceval = {  "EUR" : data[0].price_eur, "USD" : data[0].price_usd, "BTC" : 
                   "inr" : data[0].price_inr, "jpy" : data[0].price_jpy, "krw" : data[0].price_krw, 
                   "mxn" : data[0].price_mxn, "cad" : data[0].price_cad }
 
-var price = priceval[currency]
-                                    
-return price
+var price = parseFloat(priceval[currency_output])
+var percent_change_1h = parseFloat(data[0].percent_change_1h)
+var percent_change_24h = parseFloat(data[0].percent_change_24h)
+var percent_change_7d = parseFloat(data[0].percent_change_7d)
+
+switch(output){
+  case "price": return price;
+  case "percent_change_1h": return percent_change_1h;
+  case "percent_change_24h": return percent_change_24h;
+  case "percent_change_7d": return percent_change_7d;    
+     }
+}
+
+function onOpen() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet();
+  var entries = [{
+    name : "Refresh",
+    functionName : "refreshLastUpdate"
+  }];
+  sheet.addMenu("Refresh", entries);
+}
+
+function refreshLastUpdate() {
+  SpreadsheetApp.getActiveSpreadsheet().getRange('A1').setValue(new Date().toTimeString());
 }
